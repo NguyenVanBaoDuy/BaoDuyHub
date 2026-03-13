@@ -1,6 +1,5 @@
 -- =============================================
--- AUTO NPC FARM HUB + INTRO - 
--- Dành cho bạn ❤️
+-- AUTO NPC FARM HUB V2 - Fix 2026 By Grok (dùng LinearVelocity + AlignPosition)
 -- =============================================
 
 local Players = game:GetService("Players")
@@ -11,75 +10,65 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
--- ================== INTRO LOADING ==================
-local screenGui = Instance.new("ScreenGui")
+-- ================== INTRO (giữ nguyên) ==================
+local screenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
 screenGui.ResetOnSpawn = false
-screenGui.Parent = game:GetService("CoreGui")
 
-local intro = Instance.new("Frame")
-intro.Size = UDim2.new(0, 420, 0, 220)
-intro.Position = UDim2.new(0.5, -210, 0.5, -110)
-intro.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-intro.Parent = screenGui
+local intro = Instance.new("Frame", screenGui)
+intro.Size = UDim2.new(0,420,0,220)
+intro.Position = UDim2.new(0.5,-210,0.5,-110)
+intro.BackgroundColor3 = Color3.fromRGB(15,15,15)
+Instance.new("UICorner", intro).CornerRadius = UDim.new(0,16)
 
-Instance.new("UICorner", intro).CornerRadius = UDim.new(0, 16)
+local txt = Instance.new("TextLabel", intro)
+txt.Size = UDim2.new(1,0,1,0)
+txt.BackgroundTransparency = 1
+txt.Text = "🔥 AUTO FARM V2\nFix fly + farm 2026\nBy Grok - Chill Zino"
+txt.TextColor3 = Color3.fromRGB(0,255,200)
+txt.TextScaled = true
+txt.Font = Enum.Font.GothamBold
 
-local introText = Instance.new("TextLabel")
-introText.Size = UDim2.new(1, 0, 1, 0)
-introText.BackgroundTransparency = 1
-introText.Text = "🔥 AUTO NPC FARM\nBy Grok\nĐang tải hub đẹp cho Zino..."
-introText.TextColor3 = Color3.fromRGB(0, 255, 200)
-introText.TextScaled = true
-introText.Font = Enum.Font.GothamBold
-introText.Parent = intro
-
-wait(2.5)
+wait(2)
 intro:Destroy()
 
--- ================== HUB GUI ==================
-local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 420, 0, 380)
-main.Position = UDim2.new(0.5, -210, 0.5, -190)
-main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-main.Parent = screenGui
+-- ================== HUB (giữ nguyên + thêm toggle fly mode) ==================
+local main = Instance.new("Frame", screenGui)
+main.Size = UDim2.new(0,420,0,420)
+main.Position = UDim2.new(0.5,-210,0.5,-210)
+main.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
 
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
-
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 60)
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1,0,0,60)
 title.BackgroundTransparency = 1
-title.Text = "🔥 AUTO NPC FARM HUB 🔥"
-title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.Text = "🔥 AUTO NPC FARM V2 2026 🔥"
+title.TextColor3 = Color3.fromRGB(255,215,0)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
-title.Parent = main
 
 local function createToggle(txt, y, default)
-	local f = Instance.new("Frame")
-	f.Size = UDim2.new(0.92, 0, 0, 50)
-	f.Position = UDim2.new(0.04, 0, 0, y)
-	f.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	f.Parent = main
-	Instance.new("UICorner", f).CornerRadius = UDim.new(0, 8)
+	local f = Instance.new("Frame", main)
+	f.Size = UDim2.new(0.92,0,0,50)
+	f.Position = UDim2.new(0.04,0,0,y)
+	f.BackgroundColor3 = Color3.fromRGB(35,35,35)
+	Instance.new("UICorner", f).CornerRadius = UDim.new(0,8)
 
-	local label = Instance.new("TextLabel")
-	label.Size = UDim2.new(0.65, 0, 1, 0)
+	local label = Instance.new("TextLabel", f)
+	label.Size = UDim2.new(0.65,0,1,0)
 	label.BackgroundTransparency = 1
 	label.Text = txt
 	label.TextColor3 = Color3.new(1,1,1)
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.TextScaled = true
 	label.Font = Enum.Font.GothamSemibold
-	label.Parent = f
 
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0.28, 0, 0.8, 0)
-	btn.Position = UDim2.new(0.68, 0, 0.1, 0)
+	local btn = Instance.new("TextButton", f)
+	btn.Size = UDim2.new(0.28,0,0.8,0)
+	btn.Position = UDim2.new(0.68,0,0.1,0)
 	btn.Text = default and "ON" or "OFF"
 	btn.BackgroundColor3 = default and Color3.fromRGB(0,255,100) or Color3.fromRGB(255,50,50)
 	btn.TextColor3 = Color3.new(1,1,1)
 	btn.TextScaled = true
-	btn.Parent = f
 	Instance.new("UICorner", btn)
 
 	local state = {value = default, btn = btn}
@@ -91,42 +80,78 @@ local function createToggle(txt, y, default)
 	return state
 end
 
-local autoFarm   = createToggle("Auto Farm (Bật/Tắt)", 70, false)
-local flyHead    = createToggle("Bay lên đầu NPC", 130, true)
-local attackFar  = createToggle("Đánh xa", 180, true)
-local attackBelow= createToggle("Đánh dưới NPC", 230, true)
-local groupNPC   = createToggle("Gom NPC cùng loại", 280, true)
+local autoFarm    = createToggle("Auto Farm (Bật/Tắt)", 70, false)
+local flyHead     = createToggle("Bay lên đầu NPC", 130, true)
+local attackFar   = createToggle("Đánh xa", 180, true)
+local attackBelow = createToggle("Đánh dưới NPC", 230, true)
+local groupNPC    = createToggle("Gom NPC cùng loại", 280, true)
+local useNewFly   = createToggle("Dùng fly mới (Linear + Align) - fix Byfron", 330, true)
 
--- ================== FLY SYSTEM ==================
-local bv
-local function flyTo(pos)
-	if not hrp then return end
-	if not bv then
-		bv = Instance.new("BodyVelocity")
-		bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-		bv.Parent = hrp
+-- ================== FLY SYSTEM MỚI (LinearVelocity + AlignPosition) ==================
+local alignPos, linearVel, alignOri
+
+local function setupFly()
+	if alignPos then alignPos:Destroy() end
+	if linearVel then linearVel:Destroy() end
+	if alignOri then alignOri:Destroy() end
+
+	alignPos = Instance.new("AlignPosition")
+	alignPos.MaxForce = 1e6
+	alignPos.Responsiveness = 200
+	alignPos.Parent = hrp
+
+	linearVel = Instance.new("LinearVelocity")
+	linearVel.MaxForce = 1e6
+	linearVel.VectorVelocity = Vector3.new()
+	linearVel.Parent = hrp
+
+	alignOri = Instance.new("AlignOrientation")
+	alignOri.MaxTorque = 1e6
+	alignOri.Responsiveness = 200
+	alignOri.Parent = hrp
+end
+
+local function flyTo(pos, lookAt)
+	if not useNewFly.value then
+		-- Fallback cũ nếu toggle off
+		if not hrp:FindFirstChild("BodyVelocity") then
+			local bv = Instance.new("BodyVelocity", hrp)
+			bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+		end
+		hrp.BodyVelocity.Velocity = (pos - hrp.Position).Unit * 120
+		return
 	end
-	bv.Velocity = (pos - hrp.Position).Unit * 120
+
+	if not alignPos then setupFly() end
+
+	alignPos.Position = pos
+	linearVel.VectorVelocity = (pos - hrp.Position).Unit * 120
+
+	if lookAt then
+		alignOri.CFrame = CFrame.lookAt(hrp.Position, lookAt)
+	end
 end
 
 local function stopFly()
-	if bv then bv:Destroy() bv = nil end
+	if alignPos then alignPos:Destroy() alignPos = nil end
+	if linearVel then linearVel:Destroy() linearVel = nil end
+	if alignOri then alignOri:Destroy() alignOri = nil end
+	if hrp:FindFirstChild("BodyVelocity") then hrp.BodyVelocity:Destroy() end
 end
 
 -- ================== MAIN LOOP ==================
 RunService.Heartbeat:Connect(function()
-	if not autoFarm.value or not hrp or not character then return end
+	if not autoFarm.value or not hrp then return end
 
-	-- TÌM NPC GẦN NHẤT + BỎ QUEST GIVER
 	local nearest, minDist = nil, math.huge
 	local allSameType = {}
 
 	for _, obj in ipairs(Workspace:GetDescendants()) do
 		if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj.Humanoid.Health > 0 then
-			local root = obj:FindFirstChild("HumanoidRootPart")
+			local root = obj:FindFirstChild("HumanoidRootPart") or obj:FindFirstChild("PrimaryPart")
 			if root then
-				-- ================== BỎ NPC NHẬN NHIỆM VỤ ==================
-				if obj.Name:lower():find("quest") or obj:FindFirstChild("Quest") or obj:FindFirstChildWhichIsA("BillboardGui") or obj:FindFirstChild("Dialogue") then
+				-- Bỏ quest NPC (tên chứa quest/Questgiver/BillboardGui có text "Quest")
+				if obj.Name:lower():find("quest") or obj:FindFirstChild("Quest") or obj:FindFirstChildWhichIsA("BillboardGui") then
 					continue
 				end
 
@@ -135,58 +160,56 @@ RunService.Heartbeat:Connect(function()
 					minDist = dist
 					nearest = obj
 				end
-
-				-- Lưu để gom cùng loại
 				table.insert(allSameType, obj)
 			end
 		end
 	end
 
 	if not nearest then return end
-	local npcRoot = nearest:FindFirstChild("HumanoidRootPart")
+	local npcRoot = nearest:FindFirstChild("HumanoidRootPart") or nearest.PrimaryPart
 	if not npcRoot then return end
 
-	-- ================== GOM NPC CÙNG LOẠI ==================
+	-- Gom NPC
 	if groupNPC.value then
-		local sumPos = Vector3.new(0,0,0)
+		local sum = Vector3.new()
 		local count = 0
-		for _, npc in ipairs(allSameType) do
-			if npc.Name == nearest.Name and npc:FindFirstChild("HumanoidRootPart") then
-				sumPos = sumPos + npc.HumanoidRootPart.Position
-				count = count + 1
+		for _, npc in allSameType do
+			if npc.Name == nearest.Name and (npc:FindFirstChild("HumanoidRootPart") or npc.PrimaryPart) then
+				sum += (npc.HumanoidRootPart or npc.PrimaryPart).Position
+				count += 1
 			end
 		end
 		if count > 1 then
-			local center = sumPos / count
-			flyTo(center + Vector3.new(0, 8, 0))
-			task.wait(0.4)
+			local center = sum / count
+			flyTo(center + Vector3.new(0,10,0), npcRoot.Position)
+			task.wait(0.3)
 		end
 	end
 
-	-- ================== BAY LÊN ĐẦU / DƯỚI ==================
-	local targetPos
+	-- Bay đầu / dưới
+	local offset = flyHead.value and 13 or -6
 	if flyHead.value and attackBelow.value then
-		targetPos = math.random() > 0.5 
-			and (npcRoot.Position + Vector3.new(0, 13, 0))   -- lên đầu
-			or  (npcRoot.Position + Vector3.new(0, -6, 0))   -- dưới
-	elseif flyHead.value then
-		targetPos = npcRoot.Position + Vector3.new(0, 13, 0)
-	else
-		targetPos = npcRoot.Position + Vector3.new(0, -6, 0)
+		offset = math.random() > 0.5 and 13 or -6
 	end
-	flyTo(targetPos)
+	local target = npcRoot.Position + Vector3.new(0, offset, 0)
+	flyTo(target, npcRoot.Position)
 
-	-- ================== ĐÁNH (CHỈNH THEO GAME CỦA BẠN) ==================
-	-- Cách 1: Tool bình thường (hầu hết game)
-	local tool = character:FindFirstChildOfClass("Tool")
-	if tool and (attackFar.value or attackBelow.value) then
-		tool:Activate()
+	-- Đánh (thử cả 2 cách)
+	if attackFar.value or attackBelow.value then
+		local tool = character:FindFirstChildOfClass("Tool")
+		if tool then tool:Activate() end
+
+		-- Nếu game remote (thử uncomment nếu biết tên remote)
+		-- pcall(function() game.ReplicatedStorage:FindFirstChild("Damage") or game.ReplicatedStorage.Remotes:FindFirstChild("Attack"):FireServer(npcRoot) end)
 	end
-
-	-- Cách 2: Nếu game dùng Remote (bỏ comment và chỉnh tên remote nếu cần)
-	-- pcall(function()
-	--     game.ReplicatedStorage.Remotes.Attack:FireServer(npcRoot.Position)
-	-- end)
 end)
 
-print("✅ Script đã load thành công! Mở hub và bật Auto Farm là chạy.")
+-- Cleanup khi die/reset
+player.CharacterAdded:Connect(function(newChar)
+	character = newChar
+	hrp = newChar:WaitForChild("HumanoidRootPart")
+	stopFly()
+end)
+
+print("✅ V2 loaded! Bật Auto Farm + Fly mới là bay ngon. Nếu vẫn không bay → thử executor khác (Solara, Wave, Codex mới nhất).")
+print("Báo game mày chơi (Blox Fruits? Peroxide? Grand Piece?) để fix đánh chuẩn hơn nhé!")
